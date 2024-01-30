@@ -42,7 +42,7 @@ const handleNewsId = async (newsId) => {
 
 
     newsDataCategories?.forEach(newsDataCategory => {
-        console.log(newsDataCategory);
+        // console.log(newsDataCategory);
         const div = document.createElement('div');
         div.innerHTML = `
         <div class="card bg-base-100 shadow-xl">
@@ -52,10 +52,12 @@ const handleNewsId = async (newsId) => {
                 ${newsDataCategory?.title.slice(0, 40)}
                 <div class="badge badge-secondary absolute top-0 right-0"> ${newsDataCategory?.rating?.badge}</div>
                 </h2>
-                <p>If a dog chews shoes whose shoes does he choose?</p>
+                <p>${newsDataCategory?.details.slice(0, 50)}</p>
+                <p>Total views: ${newsDataCategory?.total_view ? newsDataCategory?.total_view : 'No Views'}</p>
                 <div class="card-actions justify-end">
-                <div class="badge badge-outline">Fashion</div>
-                <div class="badge badge-outline">Products</div>
+                
+                <button class="btn" onclick="handleModal('${newsDataCategory?._id}')">Show Details</button>
+                
                 </div>
             </div>
         </div>
@@ -71,6 +73,34 @@ const handleNewsId = async (newsId) => {
 
 }
 
+const handleModal = async (newsModalId) => {
+    const res = await fetch(`https://openapi.programming-hero.com/api/news/${newsModalId}`)
+    const data = await res.json();
+    const newsModelsData = data.data;
+    newsModelsData.forEach(newsModelData => {
+        showNewsModalDetails(newsModelData);
+    })
+
+}
+
+const showNewsModalDetails = (newsDetails) => {
+    console.log(newsDetails);
+    showDataDetailsModal.showModal();
+    const showDetailsContainer = document.getElementById('showDetailsContainer');
+    showDetailsContainer.innerHTML = `
+       <p>${newsDetails?.details}</p>
+        <form method="dialog" class=' flex justify-end'>
+            <button class="btn">Close</button>
+        </form>
+    `
+
+}
+
+
+
 
 // Call the function to fetch data
 handleLoadCategories();
+
+// for always active one tab like (01)id
+handleNewsId('01');
